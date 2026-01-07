@@ -1,0 +1,105 @@
+<!-- HTML FILE (index.html) -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Page</title>
+    <link rel="stylesheet" href="login.css" />
+
+    <script>
+      function goHome() {
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        // Regex for proper email format
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // Email validation
+        if (!email) {
+          alert("Please enter your email.");
+          return false;
+        }
+        if (!emailPattern.test(email)) {
+          alert("Please enter a valid email address.");
+          return false;
+        }
+
+        // Password validation
+        if (!password) {
+          alert("Please enter your password.");
+          return false;
+        }
+        if (password.length < 8) {
+          alert("Password must be at least 8 characters long.");
+          return false;
+        }
+
+        // All validations passed
+        window.location.href = "index.html";
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="left">
+        <div class="logo">
+          <div class="logo-circle"></div>
+          <h2>Nepdine</h2>
+        </div>
+
+        <h1 class="welcome-title">
+          WELCOME <span class="highlight">BACK</span>
+        </h1>
+        <p class="subtitle">Welcome back! Please enter your details.</p>
+
+        <div class="input">
+          <label class="email">Email</label>
+          <input
+            type="email"
+            placeholder="Enter your email"
+            class="input-box"
+            id="email"
+          />
+          <label class="email">Password</label>
+          <input
+            type="password"
+            placeholder="********"
+            class="input-box"
+            id="password"
+          />
+        </div>
+
+        <div class="small-row">
+          <div class="remember-me">
+            <label for="remember-me">Remember me</label>
+            <input type="checkbox" id="remember-me" />
+          </div>
+          <a href="#">Forgot password?</a>
+        </div>
+
+        <button class="btn-login" onclick="goHome()">Login</button>
+
+        <div class="auth-section">
+          <div class="divider">
+            <span>or</span>
+          </div>
+
+          <button class="google-btn">
+            <img
+              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+              alt="Google logo"
+            />
+            Sign in with Google
+          </button>
+
+          <p class="signup-text">
+            Don't have an account?
+            <a href="signup.html">Sign up</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+`

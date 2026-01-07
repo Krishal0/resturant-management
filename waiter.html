@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      function logout() {
+        window.location.href = "login.html";
+      }
+    </script>
+    <meta charset="UTF-8" />
+    <title>Waiters - RMS</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="sidebar">
+      <h2>NepDine</h2>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="waiter.html">Waiter</a></li>
+        <li><a href="table.html">Table</a></li>
+        <li><a href="billing.html">Billing</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
+      </ul>
+    </div>
+
+    <div class="main">
+      <h1>Waiters</h1>
+
+      <h3>Add New Waiter</h3>
+      <input type="text" id="newUser" placeholder="Enter waiter's name" />
+      <input type="email" id="newEmail" placeholder="Enter waiter's email" />
+      <button onclick="addUser()">Add Waiter</button>
+
+      <h3>Waiter List</h3>
+      <table id="userTable">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Action</th>
+        </tr>
+      </table>
+    </div>
+
+    <script>
+      // if(localStorage.getItem("loggedIn") !== "true") {
+      //     window.location.href = "login.html";
+      // }
+
+      let users = JSON.parse(localStorage.getItem("users")) || [];
+
+      function renderUsers() {
+        const table = document.getElementById("userTable");
+        table.innerHTML =
+          "<tr><th>ID</th><th>Name</th><th>Email</th><th>Action</th></tr>";
+
+        users.forEach((user, index) => {
+          let row = table.insertRow();
+          row.insertCell(0).innerText = index + 1;
+          row.insertCell(1).innerText = user.name;
+          row.insertCell(2).innerText = user.email;
+
+          // Delete Button
+          let deleteCell = row.insertCell(3);
+          deleteCell.innerHTML = `<button onclick="deleteUser(${index})" class="deleteBtn">Delete</button>`;
+        });
+      }
+
+      function addUser() {
+        const name = document.getElementById("newUser").value;
+        const email = document.getElementById("newEmail").value;
+
+        if (name && email) {
+          users.push({ name, email });
+          localStorage.setItem("users", JSON.stringify(users));
+          renderUsers();
+          document.getElementById("newUser").value = "";
+          document.getElementById("newEmail").value = "";
+        } else {
+          alert("Please enter both name and email");
+        }
+      }
+
+      // DELETE FUNCTION
+      function deleteUser(index) {
+        if (confirm("Are you sure you want to delete this user?")) {
+          users.splice(index, 1);
+          localStorage.setItem("users", JSON.stringify(users));
+          renderUsers();
+        }
+      }
+
+      function logout() {
+        localStorage.removeItem("loggedIn");
+        window.location.href = "login.html";
+      }
+
+      renderUsers();
+    </script>
+  </body>
+</html>

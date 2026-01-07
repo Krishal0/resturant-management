@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      function logout() {
+        window.location.href = "login.html";
+      }
+    </script>
+    <meta charset="UTF-8" />
+    <title>Menu</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="sidebar">
+      <h2>NepDine</h2>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="waiter.html">Waiter</a></li>
+        <li><a href="table.html">Table</a></li>
+        <li><a href="billing.html">Billing</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
+      </ul>
+    </div>
+    <div class="main">
+      <h1>Menu</h1>
+
+      <h2 class="menu-category">Starter</h2>
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Dish Name</th>
+          <th>Price</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Spring Rolls</td>
+          <td>$6</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Chicken Soup</td>
+          <td>$5</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Garlic Bread</td>
+          <td>$4</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Fried Momos</td>
+          <td>$7</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Paneer Tikka</td>
+          <td>$8</td>
+        </tr>
+      </table>
+
+      <h2 class="menu-category">Main Course</h2>
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Dish Name</th>
+          <th>Price</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Chicken Biryani</td>
+          <td>$12</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Veg Thali</td>
+          <td>$10</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Grilled Chicken</td>
+          <td>$15</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Masala Pasta</td>
+          <td>$11</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Buff Sekuwa</td>
+          <td>$14</td>
+        </tr>
+      </table>
+
+      <h2 class="menu-category">Drinks</h2>
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Drink Name</th>
+          <th>Price</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Fresh Lemon Soda</td>
+          <td>$3</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Iced Coffee</td>
+          <td>$4</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Mango Lassi</td>
+          <td>$5</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Chocolate Shake</td>
+          <td>$6</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Mineral Water</td>
+          <td>$2</td>
+        </tr>
+      </table>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,228 @@
+/* Global */
+body {
+    font-family: "Poppins", Arial, sans-serif;
+    margin: 0;
+    display: flex;
+    background: #f5f7fa;
+    color: #333;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 230px;
+    background: linear-gradient(180deg, #4b79a1, #283e51);
+    color: #fff;
+    min-height: 100vh;
+    padding: 25px 20px;
+    box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 40px;
+    letter-spacing: 1px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 18px 0;
+}
+
+.sidebar ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 10px 15px;
+    display: block;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.sidebar ul li a:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateX(6px);
+}
+
+/* Main Layout */
+.main {
+    flex: 1;
+    padding: 30px 40px;
+}
+
+.main h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+    color: #283e51;
+}
+
+/* Menu Section Titles */
+.menu-category {
+    font-size: 24px;
+    margin-top: 40px;
+    margin-bottom: 10px;
+    color: #4b79a1;
+    border-left: 6px solid #4b79a1;
+    padding-left: 12px;
+    font-weight: 600;
+}
+
+/* Table */
+table {
+    width: 90%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 12px 10px;
+    text-align: left;
+}
+
+table th {
+    background: #4b79a1;
+    color: #fff;
+    font-size: 16px;
+}
+
+table td {
+    background: #fff;
+    font-size: 15px;
+}
+
+table tr:hover td {
+    background: #eef4ff;
+}
+
+/* Enhanced Hover Effect on Category Tables */
+table:hover {
+    transform: scale(1.01);
+    transition: 0.2s ease-in-out;
+}
+
+.home-image img {
+width: 55%;
+}
+
+/* Responsive for Mobile */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 180px;
+        align-items: center;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    .menu-category {
+        font-size: 20px;
+    }
+}
+
+/* ===== BIG Dynamic Home Text Animation (Hero Style) ===== */
+
+.home-container {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+}
+
+/* MAIN BIG TITLE */
+.animated-title {
+    font-size: 56px;   /* ⬅️ Increased */
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.brand {
+    color: #4b79a1;
+    animation: glow 2s infinite alternate;
+}
+
+/* Stronger Glow */
+@keyframes glow {
+    0% { text-shadow: 0 0 8px #4b79a1; }
+    100% { text-shadow: 0 0 22px #4b79a1; }
+}
+
+/* BIG Dynamic Changing Text */
+.tagline {
+    font-size: 28px;   /* ⬅️ Increased */
+    margin-top: 18px;
+    font-weight: 600;
+}
+
+.dynamic-text {
+    display: inline-block;
+    height: 34px;
+    overflow: hidden;
+    vertical-align: middle;
+    margin-left: 8px;
+}
+
+.dynamic-text span {
+    display: block;
+    animation: slideText 8s infinite;
+    color: #283e51;
+    font-weight: 700;
+}
+
+/* Sliding Animation */
+@keyframes slideText {
+    0% { transform: translateY(0); }
+    25% { transform: translateY(-34px); }
+    50% { transform: translateY(-68px); }
+    75% { transform: translateY(-102px); }
+    100% { transform: translateY(0); }
+}
+
+/* Subtitle Bigger */
+.subtitle {
+    margin-top: 18px;
+    color: #555;
+    font-size: 18px;  /* ⬅️ Increased */
+}
+/* ===== HERO LAYOUT WITH CENTERED IMAGE ===== */
+
+.home-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 60px;
+    min-height: 80vh;
+}
+
+/* IMAGE CENTERED & BLENDED */
+.home-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-image img {
+    width: 320px;
+    max-width: 100%;
+    opacity: 0.95;
+    animation: float 4s ease-in-out infinite;
+}
+
+/* Soft Floating Effect */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}

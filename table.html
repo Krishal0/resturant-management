@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      function logout() {
+        window.location.href = "login.html";
+      }
+    </script>
+    <meta charset="UTF-8" />
+    <title>Tables</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="sidebar">
+      <h2>NepDine</h2>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="waiter.html">Waiter</a></li>
+        <li><a href="table.html">Table</a></li>
+        <li><a href="billing.html">Billing</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
+      </ul>
+    </div>
+    <div class="main">
+      <h1>Tables</h1>
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Table Name</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Table 1</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Table 2</td>
+        </tr>
+      </table>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

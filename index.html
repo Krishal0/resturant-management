@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      function logout() {
+        window.location.href = "login.html";
+      }
+    </script>
+    <meta charset="UTF-8" />
+    <title>Restaurant Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="sidebar">
+      <h2>NepDine</h2>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="waiter.html">Waiter</a></li>
+        <li><a href="table.html">Table</a></li>
+        <li><a href="billing.html">Billing</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
+      </ul>
+    </div>
+
+    <div class="main">
+      <div class="home-wrapper">
+        <div class="home-text">
+          <h1 class="animated-title">
+            Welcome to <span class="brand">NepDine</span>
+          </h1>
+
+          <p class="tagline">
+            Smart Solution for
+            <span class="dynamic-text">
+              <span>Restaurant Billing</span>
+              <span>Menu Management</span>
+              <span>Table Tracking</span>
+              <span>Waiter Handling</span>
+            </span>
+          </p>
+
+          <p class="subtitle">
+            Use the sidebar to manage orders, staff, tables, and billing with
+            ease.
+          </p>
+        </div>
+
+        <!-- ✅ Centered Image -->
+        <div class="home-image">
+          <img src="logo.png" alt="Restaurant logo" />
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

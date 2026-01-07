@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      function logout() {
+        window.location.href = "login.html";
+      }
+    </script>
+    <meta charset="UTF-8" />
+    <title>Billing - RMS</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="sidebar">
+      <h2>NepDine</h2>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="waiter.html">Waiter</a></li>
+        <li><a href="table.html">Table</a></li>
+        <li><a href="billing.html">Billing</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
+      </ul>
+    </div>
+
+    <div class="main">
+      <h1>Billing</h1>
+
+      <label>Select Table:</label>
+      <select id="tableSelect">
+        <option value="1">Table 1</option>
+        <option value="2">Table 2</option>
+      </select>
+
+      <h3>Order Dishes</h3>
+      <div id="menuContainer"></div>
+
+      <button onclick="generateBill()">Generate Bill</button>
+      <h3 id="billResult"></h3>
+    </div>
+
+    <script>
+      // Check login
+      // if(localStorage.getItem("loggedIn") !== "true") {
+      //     window.location.href = "login.html";
+      // }
+
+      function logout() {
+        localStorage.removeItem("loggedIn");
+        window.location.href = "login.html";
+      }
+
+      // Example menu stored in LocalStorage or hardcoded
+      let menu = JSON.parse(localStorage.getItem("menu")) || [
+        { name: "Pizza", price: 10 },
+        { name: "Burger", price: 5 },
+        { name: "Pasta", price: 8 },
+        { name: "Salad", price: 4 },
+      ];
+
+      // Render menu
+      const menuContainer = document.getElementById("menuContainer");
+      menu.forEach((dish, index) => {
+        let div = document.createElement("div");
+        div.innerHTML = `
+        <label>${dish.name} ($${dish.price})</label>
+        Quantity: <input type="number" min="0" value="0" id="dish${index}">
+    `;
+        menuContainer.appendChild(div);
+      });
+
+      // Generate bill
+      function generateBill() {
+        let total = 0;
+        let details = "";
+        menu.forEach((dish, index) => {
+          let qty = parseInt(document.getElementById(`dish${index}`).value);
+          if (qty > 0) {
+            let amount = qty * dish.price;
+            total += amount;
+            details += `${dish.name} x ${qty} = $${amount}\n`;
+          }
+        });
+        if (total === 0) {
+          alert("Please order at least one dish!");
+          return;
+        }
+        const table = document.getElementById("tableSelect").value;
+        document.getElementById(
+          "billResult"
+        ).innerText = `Bill for Table ${table}:\n${details}Total: $${total}`;
+      }
+    </script>
+  </body>
+</html>

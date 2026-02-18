@@ -219,3 +219,26 @@ color: #222;
 
 
 
+
+/* Alert boxes for PHP validation */
+.alert-error {
+    background: #f8d7da; color: #721c24;
+    border: 1px solid #f5c6cb; border-radius: 6px;
+    padding: 10px 16px; margin-bottom: 16px; font-size: 14px;
+}
+.alert-success {
+    background: #d4edda; color: #155724;
+    border: 1px solid #c3e6cb; border-radius: 6px;
+    padding: 10px 16px; margin-bottom: 16px; font-size: 14px;
+}
+.register-btn {
+    width: 100%; padding: 12px;
+    background: #4b79a1; color: #fff;
+    border: none; border-radius: 8px;
+    font-size: 16px; cursor: pointer; margin-top: 8px;
+    transition: background 0.2s;
+}
+.register-btn:hover { background: #3a6088; }
+.password-wrapper { position: relative; }
+.toggle-eye { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888; }
+

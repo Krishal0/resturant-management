@@ -6,44 +6,67 @@ font-family: 'Poppins', sans-serif;
 }
 
 
+
 body {
-background: linear-gradient(135deg, #1b1b1b, #2d2d2d);
-display: flex;
-justify-content: center;
-align-items: center;
-height: 100vh;
-padding: 20px;
+    background: linear-gradient(120deg, #f8fafc 0%, #e0e7ef 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 24px;
 }
 
 
-.container {
-width: 95%;
-max-width: 1100px;
-background: #fcf8f8;
-border-radius: 18px;
 display: grid;
 grid-template-columns: 1fr 1fr;
 overflow: hidden;
 box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+
+.container {
+    width: 100%;
+    max-width: 420px;
+    background: #fff;
+    border-radius: 1.2rem;
+    box-shadow: 0 4px 24px 0 rgba(0,0,0,0.10);
+    padding: 2.5rem 2rem 2rem 2rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
+
 
 .subtitle {
-font-size: 16px; 
-font-style: bold; 
-font-weight: 700;  
-color: #777;
-margin-bottom: 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 1.5rem;
+    text-align: center;
 }
 
-.btn-login {
-background: #ff541c;
-color: #fff;
 padding: 12px 20px;
 border: none;
 border-radius: 10px;  
+
+.btn-login {
+    background: linear-gradient(90deg, #fbbf24 0%, #f59e42 100%);
+    color: #1e293b;
+    padding: 12px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    width: 100%;
+    margin-top: 1.2rem;
+    box-shadow: 0 2px 8px 0 rgba(251,191,36,0.08);
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+}
+.btn-login:hover {
+    background: linear-gradient(90deg, #f59e42 0%, #fbbf24 100%);
+    color: #fff;
 }
 
-.input {
     font-size: 16px;
     margin-bottom: 20px;
     display: block;
@@ -51,13 +74,24 @@ border-radius: 10px;
 .email {
     margin-bottom: 8px;
     font-weight: 600;
-    color: #333;
+    color: #1e293b;
     display: flex;
     margin-top: 8px;
 }
 .input-box{
     width: 100%;
-    padding: 10px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: #f8fafc;
+    font-size: 1rem;
+    margin-bottom: 1.1rem;
+    transition: border 0.2s;
+}
+.input-box:focus {
+    border: 1.5px solid #fbbf24;
+    outline: none;
+}
     border: 1px solid #ccc;
     border-radius: 10px;
     font-size: 16px;

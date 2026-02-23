@@ -21,14 +21,26 @@ echo "=== Starting services ==="
 sudo service apache2 start
 sudo service mysql start
 
+# --- DB credentials (override with env vars if needed) ---
+DB_ROOT_USER="${DB_ROOT_USER:-root}"
+DB_ROOT_PASS="${DB_ROOT_PASS:-}"
+DB_NAME="${DB_NAME:-nepdine_db}"
 
-echo "=== Creating database ==="
-sudo mysql -u root -e "SOURCE $(pwd)/db.sql;" 2>/dev/null || \
-    mysql -u root --password='' < "$(dirname "$0")/db.sql"
+echo "=== Creating database (${DB_NAME}) ==="
+DB_SQL_PATH="$(cd "$(dirname "$0")" && pwd)/db.sql"
 
-# password: Krishal@1234!
+# Try passwordless via sudo (auth_socket). If that fails and a password is set, use it. Otherwise abort with a clear message.
+if sudo mysql -u "$DB_ROOT_USER" -e "SELECT 1" >/dev/null 2>&1; then
+    sudo mysql -u "$DB_ROOT_USER" < "$DB_SQL_PATH"
+elif [ -n "$DB_ROOT_PASS" ]; then
+    mysql -u "$DB_ROOT_USER" -p"$DB_ROOT_PASS" < "$DB_SQL_PATH"
+else
+    echo "!! MySQL root requires a password. Re-run with: DB_ROOT_PASS=yourpass bash setup_lamp.sh" >&2
+    exit 1
+fi
+
 echo "=== Symlinking project to Apache web root ==="
-PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"#
+PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 sudo ln -sfn "$PROJECT_DIR" /var/www/html/nepdine
 
 echo ""

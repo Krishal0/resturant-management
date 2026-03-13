@@ -26,12 +26,31 @@ if (isset($_GET['cancel'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
     $table_id  = (int)($_POST['table_id']  ?? 0);
     $waiter_id = (int)($_POST['waiter_id'] ?? 0) ?: null;
+  $guest_count = (int)($_POST['guest_count'] ?? 1);
     $items     = $_POST['items'] ?? [];   // array[menu_item_id] = quantity
 
     // Validation
     if ($table_id <= 0) {
-        $err = 'Please select a table.';
+      $err = 'Please select a table.';
     } else {
+      $capacity = null;
+      $capStmt  = $db->prepare('SELECT capacity FROM restaurant_tables WHERE id=?');
+      $capStmt->bind_param('i', $table_id);
+      $capStmt->execute();
+      $capStmt->bind_result($capacity);
+      $capStmt->fetch();
+      $capStmt->close();
+
+      if ($capacity === null) {
+        $err = 'Selected table not found.';
+      } elseif ($guest_count < 1 || $guest_count > 50) {
+        $err = 'Guest count must be between 1 and 50.';
+      } elseif ($guest_count > $capacity) {
+        $err = "Guest count exceeds table capacity of $capacity.";
+      }
+    }
+
+    if (!$err) {
         // Filter out zero-qty items
         $ordered = [];
         foreach ($items as $mid => $qty) {
@@ -42,8 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
             $err = 'Please select at least one item.';
         } else {
             // Create order
-            $stmt = $db->prepare('INSERT INTO orders (table_id, waiter_id) VALUES (?,?)');
-            $stmt->bind_param('ii', $table_id, $waiter_id);
+        $stmt = $db->prepare('INSERT INTO orders (table_id, waiter_id, guest_count) VALUES (?,?,?)');
+        $stmt->bind_param('iii', $table_id, $waiter_id, $guest_count);
             $stmt->execute();
             $order_id = $db->insert_id;
             $stmt->close();
@@ -122,6 +141,10 @@ $db->close();
               <option value="<?= $t['id'] ?>"><?= htmlspecialchars($t['table_name']) ?> (cap: <?= $t['capacity'] ?>)</option>
             <?php endforeach; ?>
           </select>
+        </div>
+        <div>
+          <label>Guests <span class="req">*</span></label>
+          <input type="number" name="guest_count" class="input-field" min="1" max="50" value="1" required />
         </div>
         <div>
           <label>Waiter</label>

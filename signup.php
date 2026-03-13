@@ -11,10 +11,12 @@ $error   = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name     = trim($_POST['name']             ?? '');
-    $email    = trim($_POST['email']            ?? '');
-    $password = trim($_POST['password']         ?? '');
-    $confirm  = trim($_POST['confirm_password'] ?? '');
+  $name     = trim($_POST['name']             ?? '');
+  $email    = trim($_POST['email']            ?? '');
+  // Allow explicit username field; otherwise fall back to email to satisfy NOT NULL constraint
+  $username = trim($_POST['username'] ?? $email);
+  $password = trim($_POST['password']         ?? '');
+  $confirm  = trim($_POST['confirm_password'] ?? '');
 
     // ── Validation ──
     if (empty($name)) {
@@ -25,6 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Email is required.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Enter a valid email address.';
+    } elseif (empty($username)) {
+      $error = 'Username is required.';
+    } elseif (strlen($username) < 3) {
+      $error = 'Username must be at least 3 characters.';
     } elseif (empty($password)) {
         $error = 'Password is required.';
     } elseif (strlen($password) < 8) {
@@ -47,8 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'An account with this email already exists.';
         } else {
             $hash = password_hash($password, PASSWORD_BCRYPT);
-            $ins  = $db->prepare('INSERT INTO users (name, email, password) VALUES (?, ?, ?)');
-            $ins->bind_param('sss', $name, $email, $hash);
+            $ins  = $db->prepare('INSERT INTO users (name, username, email, password) VALUES (?, ?, ?, ?)');
+            $ins->bind_param('ssss', $name, $username, $email, $hash);
             if ($ins->execute()) {
                 $success = 'Account created! <a href="login.php">Login now</a>.';
             } else {

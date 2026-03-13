@@ -8,15 +8,16 @@ USE nepdine_db;
 CREATE TABLE IF NOT EXISTS users (
     id         INT AUTO_INCREMENT PRIMARY KEY,
     name       VARCHAR(100) NOT NULL,
+    username   VARCHAR(100) NOT NULL UNIQUE,
     email      VARCHAR(150) NOT NULL UNIQUE,
     password   VARCHAR(255) NOT NULL,
-    role       ENUM('admin','staff') DEFAULT 'staff',
+    role       ENUM('admin','staff','user') DEFAULT 'staff',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Default admin  (password: Admin@123)
-INSERT INTO users (name, email, password, role) VALUES
-('Admin', 'admin@nepdine.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
+INSERT INTO users (name, username, email, password, role) VALUES
+('Admin', 'admin', 'admin@nepdine.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
 
 -- ─── WAITERS ──────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS waiters (
@@ -80,6 +81,7 @@ CREATE TABLE IF NOT EXISTS orders (
     id           INT AUTO_INCREMENT PRIMARY KEY,
     table_id     INT NOT NULL,
     waiter_id    INT,
+    guest_count  INT DEFAULT 1,
     status       ENUM('open','billed','paid','cancelled') DEFAULT 'open',
     created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

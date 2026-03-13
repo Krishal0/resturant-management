@@ -78,6 +78,17 @@ if (isset($_GET['edit'])) {
 }
 
 $tables = $db->query('SELECT * FROM restaurant_tables ORDER BY id')->fetch_all(MYSQLI_ASSOC);
+
+// Map current guest count for active orders (latest per table)
+$guestRows = $db->query("SELECT table_id, guest_count FROM orders WHERE status IN ('open','billed') ORDER BY id DESC")
+         ->fetch_all(MYSQLI_ASSOC);
+$guestMap = [];
+foreach ($guestRows as $gr) {
+  if (!isset($guestMap[$gr['table_id']])) {
+    $guestMap[$gr['table_id']] = (int)$gr['guest_count'];
+  }
+}
+
 $db->close();
 
 $statusColors = ['available' => 'badge-green', 'occupied' => 'badge-red', 'reserved' => 'badge-orange'];
@@ -118,6 +129,7 @@ $statusColors = ['available' => 'badge-green', 'occupied' => 'badge-red', 'reser
   <!-- ── Table Grid cards ── -->
   <div class="table-grid">
     <?php foreach ($tables as $t): ?>
+    <?php $guests = $guestMap[$t['id']] ?? 0; ?>
     <div class="table-card status-<?= $t['status'] ?>">
       <div class="table-card-header">
         <strong><?= htmlspecialchars($t['table_name']) ?></strong>
@@ -125,6 +137,7 @@ $statusColors = ['available' => 'badge-green', 'occupied' => 'badge-red', 'reser
       </div>
       <div class="table-card-body">
         <span>👥 Capacity: <?= $t['capacity'] ?></span>
+        <span>🧍 Guests: <?= $guests ?> / <?= $t['capacity'] ?></span>
       </div>
       <div class="table-card-actions">
         <div class="status-select">

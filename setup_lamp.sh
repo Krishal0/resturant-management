@@ -46,4 +46,4 @@ sudo ln -sfn "$PROJECT_DIR" /var/www/html/nepdine
 echo ""
 echo " Setup complete!"
 echo "   Open: http://localhost/nepdine/login.php"
-echo "   Default admin: admin@nepdine.com / password: Admin@1234"
+echo "   Default admin: admin@nepdine.com / password: password"

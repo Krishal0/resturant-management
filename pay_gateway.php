@@ -27,7 +27,7 @@ if ($bill['payment_status'] === 'success') {
     exit;
 }
 
-$base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['REQUEST_URI']), '/\\');
+$base_url = getBaseUrl();
 
 if ($method === 'esewa') {
     $pid = $bill['esewa_pid'];

@@ -7,10 +7,9 @@ requireLogin();
 $db  = getDB();
 $msg = '';
 $err = '';
-$qr_payment_link = '';
-$qr_image_url = '';
+$wallet_qr_image = '';
 
-$base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['REQUEST_URI']), '/\\');
+$base_url = getBaseUrl();
 
 if (isset($_GET['success'])) $msg = htmlspecialchars($_GET['success']);
 if (isset($_GET['error']))   $err = htmlspecialchars($_GET['error']);
@@ -113,8 +112,7 @@ $tax_amount = round($subtotal * 0.13, 2);
 $grand_total = $subtotal + $tax_amount;
 
 if ($bill && in_array($bill['payment_method'], ['esewa', 'khalti'], true) && $bill['payment_status'] !== 'success') {
-  $qr_payment_link = $base_url . '/pay_gateway.php?order_id=' . $order_id . '&method=' . urlencode($bill['payment_method']);
-  $qr_image_url = 'https://quickchart.io/qr?size=260&text=' . urlencode($qr_payment_link);
+  $wallet_qr_image = ($bill['payment_method'] === 'esewa') ? 'qr-esewa.png' : 'qr-khalti.png';
 }
 
 // Fetch open orders list for sidebar selection
@@ -254,17 +252,15 @@ $db->close();
   <?php elseif ($bill && in_array($bill['payment_method'], ['esewa', 'khalti'], true) && $bill['payment_status'] !== 'success'): ?>
   <div class="form-card no-print" style="margin-top:1.5rem;">
     <h3>Scan to Pay (<?= strtoupper(htmlspecialchars($bill['payment_method'])) ?>)</h3>
-    <p>Customer can scan this QR to open wallet checkout for Rs. <?= number_format($bill['total_amount'], 2) ?>.</p>
-    <?php if ($qr_image_url): ?>
-      <img src="<?= htmlspecialchars($qr_image_url) ?>" alt="Payment QR" style="max-width:260px;border:1px solid #ddd;padding:8px;border-radius:8px;"/>
-      <div style="margin-top:0.7rem;word-break:break-all;font-size:0.85rem;">
-        Link: <a href="<?= htmlspecialchars($qr_payment_link) ?>" target="_blank"><?= htmlspecialchars($qr_payment_link) ?></a>
+    <p>Customer can scan this QR and pay Rs. <?= number_format($bill['total_amount'], 2) ?>.</p>
+    <?php if ($wallet_qr_image): ?>
+      <img src="<?= htmlspecialchars($wallet_qr_image) ?>" alt="Wallet payment QR"
+           style="max-width:260px;border:1px solid #ddd;padding:8px;border-radius:8px;"
+           onerror="this.style.display='none';document.getElementById('qrMissingNote').style.display='block';"/>
+      <div id="qrMissingNote" style="display:none;margin-top:0.7rem;font-size:0.9rem;color:#c0392b;">
+        QR image not found. Please place <strong><?= htmlspecialchars($wallet_qr_image) ?></strong> in the project root.
       </div>
     <?php endif; ?>
-
-    <div style="margin-top:1rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
-      <a href="<?= htmlspecialchars($qr_payment_link) ?>" target="_blank" class="btn-primary">Open <?= ucfirst($bill['payment_method']) ?> Checkout</a>
-    </div>
 
     <form method="POST" action="mark_bill_paid.php" class="inline-form" style="margin-top:1rem;">
       <input type="hidden" name="order_id" value="<?= (int)$order_id ?>"/>
@@ -273,7 +269,7 @@ $db->close();
       <button type="submit" class="btn-primary">Mark Paid (After Confirmation)</button>
     </form>
 
-    <p style="margin-top:0.5rem;font-size:0.9rem;">In localhost mode, wallet callbacks may not reach your machine from a phone. Use "Mark Paid" only after confirming payment in wallet history.</p>
+    <p style="margin-top:0.5rem;font-size:0.9rem;">After receiving payment in your wallet app, click "Mark Paid".</p>
   </div>
   <?php endif; ?>
 

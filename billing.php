@@ -7,8 +7,8 @@ requireLogin();
 $db  = getDB();
 $msg = '';
 $err = '';
-$esewa_redirect = null;
-$esewa_auto_submit = false;
+$qr_payment_link = '';
+$qr_image_url = '';
 
 $base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['REQUEST_URI']), '/\\');
 
@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['finalize'])) {
   $order_id       = (int)$_POST['order_id'];
   $payment_method = $_POST['payment_method'] ?? 'cash';
   $tax_percent    = 13.00;
+  $qr_methods     = ['esewa', 'khalti'];
 
   $res   = $db->query("SELECT SUM(quantity * unit_price) AS sub FROM order_items WHERE order_id=$order_id");
   $sub   = (float)$res->fetch_assoc()['sub'];
@@ -37,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['finalize'])) {
   }
   $bill_stmt->close();
 
-  $pay_status = ($payment_method === 'esewa') ? 'pending' : 'success';
+  $pay_status = in_array($payment_method, $qr_methods, true) ? 'pending' : 'success';
   $esewa_pid  = $bill_row['esewa_pid'] ?? null;
   if ($payment_method === 'esewa' && !$esewa_pid) {
     $esewa_pid = 'BILL-' . $order_id . '-' . time();
@@ -58,25 +59,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['finalize'])) {
     $ins->close();
   }
 
-  if ($payment_method === 'esewa') {
-    // Keep table occupied until callback verifies payment
+  if (in_array($payment_method, $qr_methods, true)) {
+    // Keep table occupied until callback/manual confirmation verifies payment
     $db->query("UPDATE orders SET status='billed' WHERE id=$order_id");
 
-    $esewa_auto_submit = true;
-    $esewa_redirect = [
-      'url'    => ESEWA_PAYMENT_URL,
-      'fields' => [
-        'amt'   => number_format($sub, 2, '.', ''),
-        'pdc'   => 0,
-        'psc'   => 0,
-        'txAmt' => number_format($tax, 2, '.', ''),
-        'tAmt'  => number_format($total, 2, '.', ''),
-        'pid'   => $esewa_pid,
-        'scd'   => ESEWA_MERCHANT_CODE,
-        'su'    => $base_url . '/esewa_verify.php?pid=' . urlencode($esewa_pid),
-        'fu'    => $base_url . '/esewa_verify.php?status=failed&pid=' . urlencode($esewa_pid),
-      ],
-    ];
+    header("Location: billing.php?order_id=$order_id&success=" . urlencode('Payment QR generated. Ask customer to scan and pay.'));
+    exit;
   } else {
     $db->query("UPDATE orders SET status='paid' WHERE id=$order_id");
     $db->query("UPDATE restaurant_tables t
@@ -124,21 +112,9 @@ foreach ($items as $it) $subtotal += $it['quantity'] * $it['unit_price'];
 $tax_amount = round($subtotal * 0.13, 2);
 $grand_total = $subtotal + $tax_amount;
 
-if ($bill && $bill['payment_method'] === 'esewa' && $bill['payment_status'] === 'pending' && !$esewa_redirect) {
-  $esewa_redirect = [
-    'url'    => ESEWA_PAYMENT_URL,
-    'fields' => [
-      'amt'   => number_format($bill['subtotal'], 2, '.', ''),
-      'pdc'   => 0,
-      'psc'   => 0,
-      'txAmt' => number_format($bill['tax_amount'], 2, '.', ''),
-      'tAmt'  => number_format($bill['total_amount'], 2, '.', ''),
-      'pid'   => $bill['esewa_pid'],
-      'scd'   => ESEWA_MERCHANT_CODE,
-      'su'    => $base_url . '/esewa_verify.php?pid=' . urlencode($bill['esewa_pid']),
-      'fu'    => $base_url . '/esewa_verify.php?status=failed&pid=' . urlencode($bill['esewa_pid']),
-    ],
-  ];
+if ($bill && in_array($bill['payment_method'], ['esewa', 'khalti'], true) && $bill['payment_status'] !== 'success') {
+  $qr_payment_link = $base_url . '/pay_gateway.php?order_id=' . $order_id . '&method=' . urlencode($bill['payment_method']);
+  $qr_image_url = 'https://quickchart.io/qr?size=260&text=' . urlencode($qr_payment_link);
 }
 
 // Fetch open orders list for sidebar selection
@@ -272,15 +248,32 @@ $db->close();
         <option value="esewa">📱 eSewa</option>
         <option value="khalti">📱 Khalti</option>
       </select>
-      <button type="submit" name="finalize" class="btn-primary">Mark as Paid &amp; Generate Bill</button>
+      <button type="submit" name="finalize" class="btn-primary">Generate Bill / QR</button>
     </form>
   </div>
-  <?php elseif ($bill && $bill['payment_method'] === 'esewa' && $bill['payment_status'] !== 'success'): ?>
+  <?php elseif ($bill && in_array($bill['payment_method'], ['esewa', 'khalti'], true) && $bill['payment_status'] !== 'success'): ?>
   <div class="form-card no-print" style="margin-top:1.5rem;">
-    <h3>Complete Payment via eSewa</h3>
-    <p>Redirect to eSewa to pay Rs. <?= number_format($bill['total_amount'], 2) ?> for Order #<?= $order_id ?>.</p>
-    <button type="button" class="btn-primary" onclick="document.getElementById('esewaPayForm')?.submit();">Pay with eSewa</button>
-    <p style="margin-top:0.5rem;font-size:0.9rem;">If the payment was already completed, refresh or wait for the verification callback to mark the bill as paid.</p>
+    <h3>Scan to Pay (<?= strtoupper(htmlspecialchars($bill['payment_method'])) ?>)</h3>
+    <p>Customer can scan this QR to open wallet checkout for Rs. <?= number_format($bill['total_amount'], 2) ?>.</p>
+    <?php if ($qr_image_url): ?>
+      <img src="<?= htmlspecialchars($qr_image_url) ?>" alt="Payment QR" style="max-width:260px;border:1px solid #ddd;padding:8px;border-radius:8px;"/>
+      <div style="margin-top:0.7rem;word-break:break-all;font-size:0.85rem;">
+        Link: <a href="<?= htmlspecialchars($qr_payment_link) ?>" target="_blank"><?= htmlspecialchars($qr_payment_link) ?></a>
+      </div>
+    <?php endif; ?>
+
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <a href="<?= htmlspecialchars($qr_payment_link) ?>" target="_blank" class="btn-primary">Open <?= ucfirst($bill['payment_method']) ?> Checkout</a>
+    </div>
+
+    <form method="POST" action="mark_bill_paid.php" class="inline-form" style="margin-top:1rem;">
+      <input type="hidden" name="order_id" value="<?= (int)$order_id ?>"/>
+      <input type="hidden" name="payment_method" value="<?= htmlspecialchars($bill['payment_method']) ?>"/>
+      <input type="text" name="txn_id" class="input-field" placeholder="Txn ID (optional)"/>
+      <button type="submit" class="btn-primary">Mark Paid (After Confirmation)</button>
+    </form>
+
+    <p style="margin-top:0.5rem;font-size:0.9rem;">In localhost mode, wallet callbacks may not reach your machine from a phone. Use "Mark Paid" only after confirming payment in wallet history.</p>
   </div>
   <?php endif; ?>
 
@@ -292,17 +285,6 @@ $db->close();
     <a href="orders.php" class="btn-primary">View Orders</a>
     <?php endif; ?>
   </div>
-
-  <?php if ($esewa_redirect): ?>
-  <form id="esewaPayForm" method="POST" action="<?= htmlspecialchars($esewa_redirect['url']) ?>" style="display:none;">
-    <?php foreach ($esewa_redirect['fields'] as $key => $value): ?>
-      <input type="hidden" name="<?= htmlspecialchars($key) ?>" value="<?= htmlspecialchars($value) ?>" />
-    <?php endforeach; ?>
-  </form>
-  <?php if ($esewa_auto_submit): ?>
-  <script>document.getElementById('esewaPayForm')?.submit();</script>
-  <?php endif; ?>
-  <?php endif; ?>
 
   <?php endif; ?>
 </div>

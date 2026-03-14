@@ -12,6 +12,9 @@ define('ESEWA_MERCHANT_CODE', 'EPAYTEST');
 define('ESEWA_PAYMENT_URL', 'https://uat.esewa.com.np/epay/main');
 define('ESEWA_VERIFY_URL',  'https://uat.esewa.com.np/epay/transrec');
 
+// Khalti credentials (set your real public key for production)
+define('KHALTI_PUBLIC_KEY', 'test_public_key_xxxxx');
+
 function getDB(): mysqli {
     $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
     if ($conn->connect_error) {

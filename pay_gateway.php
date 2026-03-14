@@ -33,6 +33,12 @@ if ($method === 'esewa') {
     $pid = $bill['esewa_pid'];
     if (!$pid) {
         $pid = 'BILL-' . $order_id . '-' . time();
+    $dbw = getDB();
+    $up = $dbw->prepare('UPDATE bills SET esewa_pid=? WHERE order_id=?');
+    $up->bind_param('si', $pid, $order_id);
+    $up->execute();
+    $up->close();
+    $dbw->close();
     }
     ?>
     <!DOCTYPE html>
